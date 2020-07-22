@@ -1,16 +1,17 @@
-<html lang="ja">
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta http-equiv="Content-Style-Type" content="text/css">
-<meta http-equiv="Content-Script-Type" content="text/javascript">
-<title>Spoken Dialog by Javascript</title>
-</head>
-<body>
-<h1>課題：音声対話</h1>
 <p>
-  <button id="startButton">start</button>
-  <button id="stopButton">stop</button>
+    <html lang="ja">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="Content-Style-Type" content="text/css">
+        <meta http-equiv="Content-Script-Type" content="text/javascript">
+        <title>Spoken Dialog by Javascript</title>
+    </head>
+    <body>
+    <h1>課題：音声対話</h1>
+<p>
+    <button id="startButton">start</button>
+    <button id="stopButton">stop</button>
 </p>
 <p>
 <div id="resultOutput"></div>
@@ -53,7 +54,7 @@
             "あなた,誰": "わたしはアレクサではありません",
             "何歳": "え、わたし、何歳にみえますか",
             "元気": "元気ですよー",
-            "好き,食べ物": "焼肉です",
+            "好きな,食べ物": "焼肉です",
             "昨日,天気": "昨日の天気はくもりでした",
             "今日,天気": "今日の天気は晴れです",
             "明日,天気": "明日の天気は雨です",
@@ -61,45 +62,45 @@
             "今日,授業": "今日はメディアデザインセミナーがあります",
             "明日,授業": "明日はイメージ情報処理があります",
         };
-      
+
         //そのまま返答する応答の定義（あいさつ）
-        var message = new Array("こんにちは", "こんばんは", "おはようございます", "おはよう","ありがとう", "さようなら");
+        var message = new Array("こんにちは", "こんばんは", "おはようございます", "おはよう", "ありがとう", "さようなら");
 
         let transcript = event.results[event.resultIndex][0].transcript; // 結果文字
         let output_not_final = '';
         if (event.results[event.resultIndex].isFinal) { // 結果が確定（Final）のとき
             asr.abort(); // 音声認識を停止
-          	    let answer = response[transcript];
+            let answer = response[transcript];
 
-            archive[time] = answer;
-            time++;
 
             tts.text = "";
             var flag = 0;
-          
+
             //入力した音声が部分的に一致しているか確認
             let keys = Object.keys(response);
-            keys.forEach(function(key) {
-            let flag2 = true;
-            console.log(transcript);
-            key.split(',').forEach(function(word) {              
-                let pattern = new RegExp(word);
-                let flag_test = pattern.test(transcript); // マッチしたらtrue, しなかったらfalse
-                flag2 = flag2 && flag_test; // 両方trueならtrue
-                console.log(pattern + '+' + ':' + flag_test);
-                //flag = flag && new RegExp(word).test(transcript);
+            keys.forEach(function (key) {
+                let flag2 = true;
+                console.log(transcript);
+                key.split(',').forEach(function (word) {
+                    let pattern = new RegExp(word);
+                    let flag_test = pattern.test(transcript); // マッチしたらtrue, しなかったらfalse
+                    flag2 = flag2 && flag_test; // 両方trueならtrue
+                    console.log(pattern + '+' + ':' + flag_test);
+                    //flag = flag && new RegExp(word).test(transcript);
 
+                });
+                if (flag2) {
+                    answer = response[key];
+                    console.log(key + " : " + answer);
+                    flag = 1;
+                    archive[time] = answer;
+                    time++;
+                }
             });
-                          if(flag2){
-		        answer = response[key];
-                console.log(key + " : " + answer);
-                                            flag = 1;
-            }
-        });
 
 
             //入力した音声があいさつと一致しているか確認
-            message.forEach(function (value){
+            message.forEach(function (value) {
                 if (value == transcript) {
                     answer = value;
                     flag = 1;
@@ -107,22 +108,22 @@
                 }
             });
 
+
             //入力した音声が今までの履歴と同じであるか確認
             var i;
-            for(i = 1;i<time; i++){
-              if(answer == archive[i-1]){
-                answer = "もう一度お答えします、" + answer;
-              }
+            for (i = 1; i < time; i++) {
+                if (answer == archive[i - 1]) {
+                    answer = "もう一度お答えします、" + answer;
+                }
             }
-
 
             if (flag == 0) {
                 answer = "すみません、もう一度お試しください";
             }
-          
-           output +='<ul><li class="question">' + transcript + '</li><li class="answer">' + answer + '</li></ul><br>';
 
-	         tts.text = answer;
+            output += '<ul><li class="question">' + transcript + '</li><li class="answer">' + answer + '</li></ul><br>';
+
+            tts.text = answer;
 
             // 再生が終了（end）ときのイベントハンドラ（終了したときに実行される）
             tts.onend = function (event) {
@@ -150,3 +151,4 @@
 </script>
 </body>
 </html>
+</p>
