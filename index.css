@@ -1,0 +1,81 @@
+body{
+
+}
+
+#resultOutput {
+    min-width: 320px;
+    max-width: 800px;
+    margin: auto;
+    padding: 1em 2em;
+    background-color: #D8F3F0;
+}
+.msg {
+    overflow: hidden;
+    margin: 0 0 1em 0;
+    padding: 0;
+}
+.msg  p{
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+.msg .talk-icon {
+    float: left;
+    width: auto;
+}
+.msg .text {
+    position: relative;
+    box-sizing: border-box;
+    width: auto;
+    min-height: 50px;
+    border-radius: 10px;
+    background-color: #fff;
+    margin: 0 auto 0 10px;
+    padding: 1em;
+    float: left;
+}
+
+.msg .text:before {
+    position: absolute;
+    top: 15px;
+    left: -20px;
+    display: block;
+    width: 0;
+    height: 0;
+    content: '';
+    border: 10px solid transparent;
+    border-right-color: #FFFFFF;
+}
+
+.msg.question .text{
+    margin: 0 10px 0 auto;
+    color: #000;
+    float: right;
+    background: #78FF6C;
+}
+.msg.question_pre .text {
+    margin: 0 10px 0 auto;
+    color: #ddd;
+    float: right;
+    background: #78FF6C;
+}
+
+.msg.question .text:before {
+    right: -20px;
+    left: auto;
+    float: right;
+    border-color: transparent;
+    border-left-color: #78FF6C;
+}
+.msg.question_pre .text:before {
+    right: -20px;
+    left: auto;
+    border-color: transparent;
+    border-left-color: #78FF6C;
+}
+
+
+/*
+参考サイト:
+https://westhillworker.com/line-talk-message-copy-paste/
+ */
