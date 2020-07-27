@@ -21,6 +21,9 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
                 integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
                 crossorigin="anonymous"></script>
+        <audio id="start" preload="auto">
+            <source src="https://soundeffect-lab.info/sound/button/mp3/decision1.mp3" type="audio/mp3">
+        </audio>
         <title>speech_recognition.github.io</title>
     </head>
     <body>
@@ -33,7 +36,11 @@
 <div id="resultOutput"></div>
 </p>
 <script>
-
+    function sound()
+    {
+        // [ID:sound-file]の音声ファイルを再生[play()]する
+        document.getElementById( 'start' ).play() ;
+    }
 
     const startButton = document.querySelector('#startButton'); // 開始ボタン
     const stopButton = document.querySelector('#stopButton'); // 停止ボタン
@@ -95,8 +102,10 @@
                 if (value == transcript) {
                     answer = value;
                     flag = 1;
-                    start = 1; //ウェイクワードの判定をtrueにする
-
+                    if(start==0) {
+                        sound();
+                        start = 1; //ウェイクワードの判定をtrueにする
+                    }
                 }
             });
             if (start == 1) {
