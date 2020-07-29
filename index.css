@@ -52,9 +52,9 @@
 }
 .msg.question_pre .text {
     margin: 0 10px 0 auto;
-    color: #ddd;
+    color: #666666;
     float: right;
-    background: #78FF6C;
+    background: rgba(120, 255, 108, 0.5);
 }
 
 .msg.question .text:before {
@@ -68,7 +68,7 @@
     right: -20px;
     left: auto;
     border-color: transparent;
-    border-left-color: #78FF6C;
+    border-left-color: rgba(120, 255, 108, 0.5);
 }
 
 
