@@ -39,6 +39,10 @@
     </p>
 </div>
 <script>
+    function getRandomInt(max) {
+        return Math.floor(Math.random() * Math.floor(max));
+    }
+
     function sound() {
         // [ID:sound-file]の音声ファイルを再生[play()]する
         document.getElementById('start').play();
@@ -94,7 +98,15 @@
             "明日,授業": "明日はイメージ情報処理があります",
         };
 
-        var search = new Array("検索", "調べる");
+        var rand = {
+            "コイントス": 0,
+            "サイコロ": 1,
+            "さいころ": 1,
+            "占い": 2,
+            "おみくじ": 2,
+            "ビンゴ": 3
+        }
+
 
         //そのまま返答する応答の定義（あいさつ）
         var message = new Array("こんにちは", "こんばんは", "おはようございます", "おはよう");
@@ -118,7 +130,8 @@
             if (start == 1) {
                 asr.abort(); // 音声認識を停止
 
-                //入力した音声が部分的に一致しているか確認
+                //入力した音声がresponseと部分的に一致しているか確認
+
                 let keys = Object.keys(response);
                 keys.forEach(function (key) {
                     let flag2 = true;
@@ -128,9 +141,8 @@
                         let flag_test = pattern.test(transcript); // マッチしたらtrue, しなかったらfalse
                         flag2 = flag2 && flag_test; // 両方trueならtrue
                         console.log(pattern + '+' + ':' + flag_test);
-                        //flag = flag && new RegExp(word).test(transcript);
-
                     });
+
                     if (flag2) {
                         answer = response[key];
                         console.log(key + " : " + answer);
@@ -139,6 +151,58 @@
                         time++;
                     }
                 });
+                //入力した音声がrandと部分的に一致しているか確認
+
+                keys = Object.keys(rand);
+                keys.forEach(function (key) {
+                    let flag2 = true;
+                    console.log(transcript);
+                    key.split(',').forEach(function (word) {
+                        let pattern = new RegExp(word);
+                        let flag_test = pattern.test(transcript); // マッチしたらtrue, しなかったらfalse
+                        flag2 = flag2 && flag_test; // 両方trueならtrue
+                        console.log(pattern + '+' + ':' + flag_test);
+                    });
+
+                    if (flag2) {
+                        console.log(key + " : " + answer);
+                        var judge = 0;
+                        switch (rand[key]) {
+                            case 0:
+                                judge = getRandomInt(2)
+                                if (judge) {
+                                    answer = "表";
+                                } else {
+                                    answer = "裏";
+                                }
+                                break;
+                            case 1:
+                                judge = getRandomInt(6) + 1;
+                                answer = judge;
+                                break;
+                            case 2:
+                                judge = getRandomInt(6);
+                                var fortune = new Array("大吉", "中吉", "小吉", "吉", "末吉", "凶");
+                                answer = fortune[judge];
+                                break;
+                            case 3:
+                                judge = getRandomInt(75) + 1;
+                                answer = judge;
+                                break;
+                            default:
+                                break;
+                        }
+
+                        answer = answer + "が出ました"
+
+
+                        flag = 1;
+                        archive[time] = answer;
+                        time++;
+                    }
+                });
+
+
                 //入力した音声が今までの履歴と同じであるか確認
                 var i;
                 for (i = 1; i < time; i++) {
@@ -176,24 +240,22 @@
 
                             // method が SAY のときのみ
                             if (res.result.method == "SAY") {
-                                console.log("あああ");
                                 flag = 1;
                                 answer = res.result.param_text_tts || res.result.param_text;
-
-
-                                output += '<div class="msg question"><p class="text">' + transcript + '</div><div class="msg answer"></p><p class="text">' + answer + '</p></div>';
-                                resultOutput.innerHTML = output + output_not_final;
-                                tts.text = answer;
-                                speechSynthesis.speak(tts); // 再生
+                            } else {
+                                answer = "すみません、もう一度お試しください";
                             }
+
+                            output += '<div class="msg question"><p class="text">' + transcript + '</div><div class="msg answer"></p><p class="text">' + answer + '</p></div>';
+                            resultOutput.innerHTML = output + output_not_final;
+                            tts.text = answer;
+                            speechSynthesis.speak(tts); // 再生
+
                         }
                     };
                     request.send();
                 }
 
-                if (flag == 0) {
-                    answer = "すみません、もう一度お試しください";
-                }
 
                 // 再生が終了（end）ときのイベントハンドラ（終了したときに実行される）
                 tts.onend = function (event) {
@@ -202,6 +264,7 @@
 
             } else {
                 output += '<p>「おはよう」「こんにちは」などの声をかけると、AIの認識を開始します</p>';
+                resultOutput.innerHTML = output + output_not_final;
             }
         } else { // 結果がまだ未確定のとき
             output_not_final = '<div class="msg question_pre"><p class="text">' + transcript + '</p></div>';
