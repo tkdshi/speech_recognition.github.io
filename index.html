@@ -22,24 +22,26 @@
                 integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
                 crossorigin="anonymous"></script>
         <audio id="start" preload="auto">
-            <source src="https://soundeffect-lab.info/sound/button/mp3/decision1.mp3" type="audio/mp3">
+            <source src="https://soundeffect-lab.info/sound/button/mp3/cursor3.mp3" type="audio/mp3">
         </audio>
         <title>speech_recognition.github.io</title>
     </head>
     <body>
+
     <h1>音声対話アプリケーション</h1>
 <p>
-    <button type="button" class="btn btn-primary" id="startButton">start</button>
-    <button type="button" class="btn btn-primary" id="stopButton">stop</button>
+    <button type="button" class="btn btn-primary" id="startButton">Start</button>
+    <button type="button" class="btn btn-primary" id="stopButton">Stop</button>
 </p>
-<p>
-<div id="resultOutput"></div>
-</p>
+<div id="resultOutput">
+    <p>
+        「Start」をクリックしてマイクの認識を開始します。<br>「おはよう」「こんにちは」などの声をかけると、AIの認識を開始します
+    </p>
+</div>
 <script>
-    function sound()
-    {
+    function sound() {
         // [ID:sound-file]の音声ファイルを再生[play()]する
-        document.getElementById( 'start' ).play() ;
+        document.getElementById('start').play();
     }
 
     const startButton = document.querySelector('#startButton'); // 開始ボタン
@@ -90,7 +92,7 @@
         };
 
         //そのまま返答する応答の定義（あいさつ）
-        var message = new Array("こんにちは", "こんばんは", "おはようございます", "おはよう", "ありがとう", "さようなら");
+        var message = new Array("こんにちは", "こんばんは", "おはようございます", "おはよう");
 
         let transcript = event.results[event.resultIndex][0].transcript; // 結果文字
         let output_not_final = '';
@@ -102,7 +104,7 @@
                 if (value == transcript) {
                     answer = value;
                     flag = 1;
-                    if(start==0) {
+                    if (start == 0) {
                         sound();
                         start = 1; //ウェイクワードの判定をtrueにする
                     }
@@ -156,6 +158,8 @@
                 }
 
                 speechSynthesis.speak(tts); // 再生
+            } else {
+                output += '<p>「おはよう」「こんにちは」などの声をかけると、AIの認識を開始します</p>';
             }
         } else { // 結果がまだ未確定のとき
             output_not_final = '<div class="msg question_pre"><p class="text">' + transcript + '</p></div>';
