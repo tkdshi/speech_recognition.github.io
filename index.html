@@ -26,9 +26,13 @@
         </audio>
         <title>speech_recognition.github.io</title>
     </head>
+
     <body>
 
     <h1>音声対話アプリケーション</h1>
+<p>
+    Web Services by Yahoo! JAPAN （https://developer.yahoo.co.jp/about）
+</p>
 <p>
     <button type="button" class="btn btn-primary" id="startButton">Start</button>
     <button type="button" class="btn btn-primary" id="stopButton">Stop</button>
@@ -90,9 +94,6 @@
             "何歳": "え、わたし、何歳にみえますか",
             "元気": "元気ですよー",
             "好きな,食べ物": "焼肉です",
-            "昨日,天気": "昨日の天気はくもりでした",
-            "今日,天気": "今日の天気は晴れです",
-            "明日,天気": "明日の天気は雨です",
             "昨日,授業": "昨日はデザイン情報総合演習がありました",
             "今日,授業": "今日はメディアデザインセミナーがあります",
             "明日,授業": "明日はイメージ情報処理があります",
@@ -107,6 +108,55 @@
             "ビンゴ": 3
         }
 
+        var pref = {
+            "北海道": "HOKKAIDO",
+            "青森": "AOMORI",
+            "岩手": "IWATE",
+            "宮城": "MIYAGI",
+            "秋田": "AKITA",
+            "山形": "YAMAGATA",
+            "福島": "FUKUSHIMA",
+            "茨城": "IBARAKI",
+            "栃木": "TOCHIGI",
+            "群馬": "GUNMA",
+            "埼玉": "SAITAMA",
+            "千葉": "CHIBA",
+            "東京": "TOKYO",
+            "神奈川": "KANAGAWA",
+            "新潟": "NIIGATA",
+            "富山": "TOYAMA",
+            "石川": "ISHIKAWA",
+            "福井": "FUKUI",
+            "山梨": "YAMANASHI",
+            "長野": "NAGANO",
+            "岐阜": "GIFU",
+            "静岡": "SHIZUOKA",
+            "愛知": "AICHI",
+            "三重": "MIE",
+            "滋賀": "SHIGA",
+            "京都": "KYOTO",
+            "大阪": "OSAKA",
+            "兵庫": "HYOGO",
+            "奈良": "NARA",
+            "和歌山": "WAKAYAMA",
+            "鳥取": "TOTTORI",
+            "島根": "SHIMANE",
+            "岡山": "OKAYAMA",
+            "広島": "HIROSHIMA",
+            "山口": "YAMAGUCHI",
+            "徳島": "TOKUSHIMA",
+            "香川": "KAGAWA",
+            "愛媛": "EHIME",
+            "高知": "KOCHI",
+            "福岡": "FUKUOKA",
+            "佐賀": "SAGA",
+            "長崎": "NAGASAKI",
+            "熊本": "KUMAMOTO",
+            "大分": "OITA",
+            "宮崎": "MIYAZAKI",
+            "鹿児島": "KAGOSHIMA",
+            "沖縄": "OKINAWA"
+        }
 
         //そのまま返答する応答の定義（あいさつ）
         var message = new Array("こんにちは", "こんばんは", "おはようございます", "おはよう");
@@ -151,8 +201,8 @@
                         time++;
                     }
                 });
-                //入力した音声がrandと部分的に一致しているか確認
 
+                //入力した音声がrandと部分的に一致しているか確認
                 keys = Object.keys(rand);
                 keys.forEach(function (key) {
                     let flag2 = true;
@@ -193,7 +243,7 @@
                                 break;
                         }
 
-                        answer = answer + "が出ました"
+                        answer = answer + "が出ました";
 
 
                         flag = 1;
@@ -242,6 +292,37 @@
                             if (res.result.method == "SAY") {
                                 flag = 1;
                                 answer = res.result.param_text_tts || res.result.param_text;
+                            } else if (res.result.method == "WEATHER") {
+                                flag = 1;
+                                if (res.result.nvm_that === undefined) {
+                                    answer =  "現在地の天気予報を表示します<br>"
+                                    var place = "WAKAYAMA"; //現在地
+                                    var weather_URL = "https://weathernews.jp/s/forecast/?area=" + place;
+                                    answer += '<iframe src="' + weather_URL + '" width="300" height="400" ></iframe>';
+
+                                } else {
+                                    answer = res.result.nvm_that + "の天気予報を表示します<br>"
+
+                                    //nvm_thatがprefと部分的に一致しているか確認
+                                    let keys = Object.keys(pref);
+                                    keys.forEach(function (key) {
+                                        let flag2 = true;
+                                        console.log(transcript);
+                                        key.split(',').forEach(function (word) {
+                                            let pattern = new RegExp(word);
+                                            let flag_test = pattern.test(transcript); // マッチしたらtrue, しなかったらfalse
+                                            flag2 = flag2 && flag_test; // 両方trueならtrue
+                                            console.log(pattern + '+' + ':' + flag_test);
+                                        });
+
+                                        if (flag2) {
+                                            var weather_URL = "https://weathernews.jp/s/forecast/?area=" + pref[key];
+                                            answer += '<iframe src="' + weather_URL + '" width="300" height="400" ></iframe>';
+                                        }
+                                    });
+                                }
+
+
                             } else {
                                 answer = "すみません、もう一度お試しください";
                             }
@@ -285,6 +366,7 @@
 
 
 </script>
+
 </body>
 </html>
 </p>
